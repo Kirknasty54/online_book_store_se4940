@@ -1,5 +1,5 @@
 // Base configuration
-const API_BASE_URL = 'http://localhost:8080'; // Update with your backend URL
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // Generic fetch wrapper
 async function apiRequest(endpoint, options = {}) {
@@ -29,8 +29,8 @@ async function apiRequest(endpoint, options = {}) {
 
 // Example API functions
 export const booksApi = {
-  getAll: () => apiRequest('/books'),
-  getById: (id) => apiRequest(`/books/${id}`),
+  getAll: () => apiRequest('/books/allbooks'),
+  getById: (id) => apiRequest(`/books/${id}`, {method: 'GET'}),
   create: (data) => apiRequest('/books', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => apiRequest(`/books/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => apiRequest(`/books/${id}`, { method: 'DELETE' }),
