@@ -1,6 +1,8 @@
 import {Link} from "react-router-dom";
+import {useAuth} from "../AuthContext.jsx";
 
-export default function Navbar({loggedIn, isAdmin, logoutAction}) {
+export default function Navbar({logoutAction, cartCount}) {
+    const { loggedIn, admin } = useAuth();
     return(
         <nav className="bg-white border-gray-200 dark:bg-gray-900">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -34,6 +36,10 @@ export default function Navbar({loggedIn, isAdmin, logoutAction}) {
                                className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Login</Link>
                         </li>
                         }
+                        {loggedIn && admin && <li>
+                            <Link to="/admin"
+                                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Admin</Link>
+                        </li>}
                         {loggedIn &&
                         <li>
                             <Link to={"/"}
@@ -41,17 +47,19 @@ export default function Navbar({loggedIn, isAdmin, logoutAction}) {
                                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</Link>
                         </li>
                         }
-                        {loggedIn && isAdmin && <li>
-                            <Link to="/admin"
-                               className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Admin</Link>
-                        </li>}
+
                         <li>
-                            <Link to="/cart" className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:p-0 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
+                            <Link to="/cart" className="block py-2 px-3 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:p-0 dark:hover:bg-gray-700 md:dark:hover:bg-transparent relative">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-gray-900 dark:text-white hover:text-blue-700 dark:hover:text-blue-500">
                                     <circle cx="9" cy="21" r="1"/>
                                     <circle cx="20" cy="21" r="1"/>
                                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                                 </svg>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </Link>
                         </li>
                     </ul>

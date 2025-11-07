@@ -1,4 +1,6 @@
 import {Link} from "react-router-dom";
+import BookAnimation from "../components/BookAnimation.jsx";
+
 export default function HomePage({loggedIn}) {
     return(
         <div>
@@ -24,10 +26,11 @@ export default function HomePage({loggedIn}) {
                             See our Books
                         </Link>
                     </div>
+
+                    {/* Book Page Turning Animation */}
+                    <BookAnimation />
                 </div>
             </section>
-
-
         </div>
     )
 }

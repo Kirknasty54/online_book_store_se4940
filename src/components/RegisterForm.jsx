@@ -1,8 +1,10 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {authApi} from "../api/TanStackClient.js";
+import {useAuth} from "../AuthContext.jsx";
 
-export default function RegisterForm({registerAction}) {
+export default function RegisterForm() {
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -26,7 +28,7 @@ export default function RegisterForm({registerAction}) {
             const reg_response = await authApi.register({ username, password });
             const reg_login_response= await authApi.login({ username, password });
             localStorage.setItem("token", reg_login_response);
-            registerAction("registered");
+            login(); // Trigger auth context to check admin status
             // Successful registration - redirect to books page
             navigate("/books");
         } catch (err) {

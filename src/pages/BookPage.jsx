@@ -1,9 +1,14 @@
 import {useQuery} from "@tanstack/react-query";
 import {booksApi} from "../api/TanStackClient.js";
 import {useParams} from "react-router-dom";
+import {useContext, useState} from "react";
+
+import {CartContext} from "../CartContext.jsx";
 
 export default function BookPage() {
     const {isbn_id} = useParams();
+    const {addToCart} = useContext(CartContext);
+    const [added, setAdded] = useState(false);
 
     const {data: book, isLoading, isError, error} = useQuery({
         queryKey: ["book", isbn_id],
@@ -50,8 +55,15 @@ export default function BookPage() {
                             </div>
                         )}
 
-                        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
-                            Add to Cart
+                        <button
+                            onClick={() => {
+                                console.log('Adding book to cart:', book);
+                                addToCart(book);
+                                setAdded(true);
+                                setTimeout(() => setAdded(false), 2000);
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                            {added ? '✓ Added to Cart!' : 'Add to Cart'}
                         </button>
                     </div>
                 </div>

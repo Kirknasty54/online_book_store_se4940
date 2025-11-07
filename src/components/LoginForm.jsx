@@ -1,8 +1,10 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {authApi} from "../api/TanStackClient.js";
+import {useAuth} from "../AuthContext.jsx";
 
-export default function LoginForm({onAction}) {
+export default function LoginForm() {
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -18,7 +20,7 @@ export default function LoginForm({onAction}) {
             const response = await authApi.login({ username, password });
             // Successful login - redirect to books page
             localStorage.setItem("token", response);
-            onAction("logged in");
+            login(); // Trigger auth context to check admin status
             navigate("/books");
         } catch (err) {
             setError(err.message || "Login failed. Please check your credentials.");

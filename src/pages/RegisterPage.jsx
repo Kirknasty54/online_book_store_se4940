@@ -1,7 +1,7 @@
 import RegisterForm from "../components/RegisterForm.jsx";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-export default function RegisterPage({registerAction, logInState}) {
+export default function RegisterPage({logInState}) {
     let navigate = useNavigate();
     useEffect(() => {
         if (logInState) {
@@ -12,7 +12,7 @@ export default function RegisterPage({registerAction, logInState}) {
 
     return(
         <div>
-            <RegisterForm registerAction={registerAction}/>
+            <RegisterForm />
         </div>
     )
 }

@@ -1,8 +1,8 @@
 import LoginForm from "../components/LoginForm.jsx";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
-export default function LoginPage({loginAction, logInState}) {
+export default function LoginPage({logInState}) {
     let navigate = useNavigate();
     useEffect(() => {
         if(logInState) {
@@ -13,7 +13,7 @@ export default function LoginPage({loginAction, logInState}) {
 
     return(
         <div>
-            <LoginForm onAction={loginAction}/>
+            <LoginForm />
         </div>
     )
 }

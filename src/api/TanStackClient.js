@@ -40,3 +40,7 @@ export const authApi = {
   login: (credentials) => apiRequest('/users/auth', { method: 'POST', body: JSON.stringify(credentials) }),
   register: (userData) => apiRequest('/users/register', { method: 'POST', body: JSON.stringify(userData) }),
 };
+
+export const checkOutApi = {
+    checkout: (bookId) => apiRequest(`/books/${bookId}/checkout`, { method: 'POST' }),
+}
