@@ -13,6 +13,7 @@ import {jwtDecode} from "jwt-decode";
 import {CartContext as CartContext1} from "./CartContext.jsx";
 import {AuthProvider, useAuth} from "./AuthContext.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
 
 function App() {
     const [isCartLoaded, setIsCartLoaded] = useState(false);
@@ -107,7 +108,7 @@ function App() {
 
   return (
       <CartContext1 value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, cartCount }}>
-          <div className={"w-screen h-screen bg-gradient-to-r from-cyan-500 to-indigo-500"}>
+          <div className={"w-screen min-h-screen bg-gradient-to-r from-cyan-500 to-indigo-500"}>
               <QueryClientProvider client={queryClient}>
                   <Navbar logoutAction={handleLogout} cartCount={cartCount}/>
                   <Routes>
@@ -117,6 +118,7 @@ function App() {
                       <Route path="/register" element={<RegisterPage logInState={loggedIn}/>} />
                       <Route path={"/books/:isbn_id"} element={<BookPage/>} />
                       <Route path={"/cart"} element={<CartPage/>}/>
+                      <Route path={"/checkout"} element={<CheckoutPage/>}/>
                       {/* protected routing, only admin users should be able to access this page */}
                       <Route path={"/admin"} element={<ProtectedRoute><AdminPage/></ProtectedRoute>} />
                   </Routes>

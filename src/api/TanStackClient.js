@@ -31,7 +31,7 @@ async function apiRequest(endpoint, options = {}) {
 export const booksApi = {
   getAll: () => apiRequest('/books/allbooks'),
   getById: (id) => apiRequest(`/books/${id}`, {method: 'GET'}),
-  create: (data) => apiRequest('/books', { method: 'POST', body: JSON.stringify(data) }),
+  create: (data) => apiRequest(`/books/create/`, { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => apiRequest(`/books/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => apiRequest(`/books/${id}`, { method: 'DELETE' }),
 };
