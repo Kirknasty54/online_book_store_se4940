@@ -1,10 +1,11 @@
 import {useContext} from "react";
 
 import {CartContext} from "../CartContext.jsx";
-import {Navigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 export default function CartPage() {
     const {cart, updateQuantity, removeFromCart} = useContext(CartContext);
+    const navigate = useNavigate();
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0).toFixed(2);
     console.log(total);
     if (cart.length === 0) {
@@ -67,7 +68,7 @@ export default function CartPage() {
                     <p>
                         Total: ${total}
                     </p>
-                    <button onClick={() => <Navigate to="/checkout"/>} className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                    <button onClick={() => navigate("/checkout")} className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
                         Checkout
                     </button>
                 </div>

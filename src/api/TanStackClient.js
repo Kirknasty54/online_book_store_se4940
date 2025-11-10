@@ -42,5 +42,5 @@ export const authApi = {
 };
 
 export const checkOutApi = {
-    checkout: (bookId) => apiRequest(`/books/${bookId}/checkout`, { method: 'POST' }),
+    checkout: (id, data) => apiRequest(`/checkout/${id}`, { method: 'POST', body: JSON.stringify(data) }),
 }

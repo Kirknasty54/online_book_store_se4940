@@ -14,6 +14,7 @@ import {CartContext as CartContext1} from "./CartContext.jsx";
 import {AuthProvider, useAuth} from "./AuthContext.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
+import Page404 from "./pages/Page404.jsx";
 
 function App() {
     const [isCartLoaded, setIsCartLoaded] = useState(false);
@@ -37,7 +38,7 @@ function App() {
         const token = localStorage.getItem("token");
 
         if (!token) {
-            return <Navigate to={"/"} replace={true}/>
+            return <Navigate to={"*"} replace={true}/>
         }
 
         try {
@@ -49,7 +50,7 @@ function App() {
             console.error("Invalid token:", error);
         }
 
-        return <Navigate to={"/"} replace={true}/>
+        return <Navigate to={"*"} replace={true}/>
     }
 
     // Check if user is already logged in on mount
@@ -119,6 +120,7 @@ function App() {
                       <Route path={"/books/:isbn_id"} element={<BookPage/>} />
                       <Route path={"/cart"} element={<CartPage/>}/>
                       <Route path={"/checkout"} element={<CheckoutPage/>}/>
+                      <Route path={"*"} element={<Page404/>}/>
                       {/* protected routing, only admin users should be able to access this page */}
                       <Route path={"/admin"} element={<ProtectedRoute><AdminPage/></ProtectedRoute>} />
                   </Routes>
