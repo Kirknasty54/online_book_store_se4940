@@ -32,7 +32,9 @@ export default function LoginForm() {
     return (
         <section className="">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-                <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <a className="cursor-pointer flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+                   onClick={() => navigate("/")}
+                >
                     <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
                          alt="logo"/>
                     Library of Kirknastia
@@ -85,7 +87,7 @@ export default function LoginForm() {
                             </div>
                             <button type="submit"
                                     disabled={loading}
-                                    className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    className="cursor-pointer w-full hover:bg-green-800 text-white bg-green-700 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 disabled:opacity-50 disabled:cursor-not-allowed">
                                 {loading ? "Signing in..." : "Sign in"}
                             </button>
                             <p className="text-sm font-light text-gray-500 dark:text-gray-400">

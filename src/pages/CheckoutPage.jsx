@@ -1,199 +1,84 @@
-import { useState } from "react";
+import { useContext, useState, useCallback, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import { CartContext } from "../CartContext.jsx";
+import { useNavigate } from "react-router-dom";
+
+// Load Stripe with your publishable key
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export default function CheckoutPage() {
-    const [shippingInfo, setShippingInfo] = useState({
-        fullName: "",
-        address: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        country: ""
-    });
+    const { cart } = useContext(CartContext);
+    const navigate = useNavigate();
 
-    const [paymentInfo, setPaymentInfo] = useState({
-        cardNumber: "",
-        cardName: "",
-        expiryDate: "",
-        cvv: ""
-    });
-
-    const handleShippingChange = (e) => {
-        setShippingInfo({
-            ...shippingInfo,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handlePaymentChange = (e) => {
-        setPaymentInfo({
-            ...paymentInfo,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const isFormComplete = () => {
-        const shippingComplete = Object.values(shippingInfo).every(value => value.trim() !== "");
-        const paymentComplete = Object.values(paymentInfo).every(value => value.trim() !== "");
-        return shippingComplete && paymentComplete;
-    };
-
-    const handlePurchase = (e) => {
-        e.preventDefault();
-        if (isFormComplete()) {
-            console.log("Processing purchase...", { shippingInfo, paymentInfo });
-            // Add your purchase logic here
+    // Store cart in sessionStorage and localStorage when component mounts
+    useEffect(() => {
+        if (cart && cart.length > 0) {
+            console.log('Saving cart to storage:', cart);
+            sessionStorage.setItem('pendingOrder', JSON.stringify(cart));
+            localStorage.setItem('checkoutCart', JSON.stringify(cart));
         }
-    };
+    }, [cart]);
+
+    // Calculate total from cart
+    const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    // Fetch client secret from your backend
+    const fetchClientSecret = useCallback(async () => {
+        try {
+            // Double-check cart is saved
+            sessionStorage.setItem('pendingOrder', JSON.stringify(cart));
+            localStorage.setItem('checkoutCart', JSON.stringify(cart));
+
+            console.log('Creating checkout session with cart:', cart);
+
+            const response = await fetch('http://localhost:8080/api/payments/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cart: cart,
+                    amount: Math.round(total * 100), // Convert to cents
+                })
+            });
+
+            const data = await response.json();
+            return data.clientSecret;
+        } catch (error) {
+            console.error('Error fetching client secret:', error);
+            throw error;
+        }
+    }, [cart, total]);
+
+    const options = { fetchClientSecret };
 
     return (
         <div className="min-h-screen bg-gray-100 py-8 px-4">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8 text-center">Checkout</h1>
 
-                <form onSubmit={handlePurchase} className="space-y-6">
-                    {/* Shipping Information */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium mb-2">Full Name</label>
-                                <input
-                                    type="text"
-                                    name="fullName"
-                                    value={shippingInfo.fullName}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
+                {/* Order Summary */}
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+                    <div className="space-y-2">
+                        {cart.map((item) => (
+                            <div key={item.isbn || item.isbn_id} className="flex justify-between">
+                                <span>{item.title} x {item.quantity}</span>
+                                <span>${(item.price * item.quantity).toFixed(2)}</span>
                             </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium mb-2">Address</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={shippingInfo.address}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">City</label>
-                                <input
-                                    type="text"
-                                    name="city"
-                                    value={shippingInfo.city}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">State</label>
-                                <input
-                                    type="text"
-                                    name="state"
-                                    value={shippingInfo.state}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">ZIP Code</label>
-                                <input
-                                    type="text"
-                                    name="zipCode"
-                                    value={shippingInfo.zipCode}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Country</label>
-                                <input
-                                    type="text"
-                                    name="country"
-                                    value={shippingInfo.country}
-                                    onChange={handleShippingChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
+                        ))}
+                        <div className="border-t pt-2 mt-2 font-bold text-lg flex justify-between">
+                            <span>Total:</span>
+                            <span>${total.toFixed(2)}</span>
                         </div>
                     </div>
+                </div>
 
-                    {/* Payment Information */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-2xl font-semibold mb-4">Payment Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium mb-2">Card Number</label>
-                                <input
-                                    type="text"
-                                    name="cardNumber"
-                                    value={paymentInfo.cardNumber}
-                                    onChange={handlePaymentChange}
-                                    placeholder="1234 5678 9012 3456"
-                                    maxLength="16"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium mb-2">Cardholder Name</label>
-                                <input
-                                    type="text"
-                                    name="cardName"
-                                    value={paymentInfo.cardName}
-                                    onChange={handlePaymentChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">Expiry Date</label>
-                                <input
-                                    type="text"
-                                    name="expiryDate"
-                                    value={paymentInfo.expiryDate}
-                                    onChange={handlePaymentChange}
-                                    placeholder="MM/YY"
-                                    maxLength="5"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-2">CVV</label>
-                                <input
-                                    type="text"
-                                    name="cvv"
-                                    value={paymentInfo.cvv}
-                                    onChange={handlePaymentChange}
-                                    placeholder="123"
-                                    maxLength="4"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Purchase Button */}
-                    <button
-                        type="submit"
-                        disabled={!isFormComplete()}
-                        className={`w-full py-3 px-6 rounded-md font-semibold text-white text-lg transition-colors ${
-                            isFormComplete()
-                                ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                                : "bg-gray-400 cursor-not-allowed"
-                        }`}
-                    >
-                        Complete Purchase
-                    </button>
-                </form>
+                {/* Stripe Embedded Checkout */}
+                <div id="checkout">
+                    <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
+                        <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                </div>
             </div>
         </div>
     );

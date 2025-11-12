@@ -3,11 +3,20 @@ const API_BASE_URL = 'http://localhost:8080/api';
 
 // Generic fetch wrapper
 async function apiRequest(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  // Add Authorization header if token exists
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
     ...options,
   });
 
@@ -43,4 +52,11 @@ export const authApi = {
 
 export const checkOutApi = {
     checkout: (id, data) => apiRequest(`/checkout/${id}`, { method: 'POST', body: JSON.stringify(data) }),
-}
+    createPaymentIntent: (data) => apiRequest('/checkout/create-payment-intent', { method: 'POST', body: JSON.stringify(data) }),
+};
+
+export const ordersApi = {
+    create: (orderData) => apiRequest('/orders/create', { method: 'POST', body: JSON.stringify(orderData) }),
+    getById: (id) => apiRequest(`/orders/${id}`, { method: 'GET' }),
+    getByUser: (userId) => apiRequest(`/orders/user/${userId}`, { method: 'GET' }),
+};

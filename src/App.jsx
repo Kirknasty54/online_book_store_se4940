@@ -14,6 +14,7 @@ import {CartContext as CartContext1} from "./CartContext.jsx";
 import {AuthProvider, useAuth} from "./AuthContext.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
+import OrderConfirmationPage from "./pages/OrderConfirmationPage.jsx";
 import Page404 from "./pages/Page404.jsx";
 
 function App() {
@@ -120,6 +121,7 @@ function App() {
                       <Route path={"/books/:isbn_id"} element={<BookPage/>} />
                       <Route path={"/cart"} element={<CartPage/>}/>
                       <Route path={"/checkout"} element={<CheckoutPage/>}/>
+                      <Route path={"/return"} element={<OrderConfirmationPage/>}/>
                       <Route path={"*"} element={<Page404/>}/>
                       {/* protected routing, only admin users should be able to access this page */}
                       <Route path={"/admin"} element={<ProtectedRoute><AdminPage/></ProtectedRoute>} />
